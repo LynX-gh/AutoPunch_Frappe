@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="TSHR_AutoClock.Pages.LocationEditPage"
+             Title="Edit Location">
+    <Grid RowDefinitions="Auto,*">
+        <Border Grid.Row="0" HeightRequest="4" StrokeThickness="0" Background="{StaticResource BrandGradient}" />
+
+        <ScrollView Grid.Row="1">
+        <VerticalStackLayout Padding="20" Spacing="12">
+            <Label Text="Edit Location" FontSize="20" FontAttributes="Bold" />
+
+            <Label Text="Name" />
+            <Entry x:Name="NameEntry" Placeholder="e.g. Office" ReturnType="Next" />
+
+            <Label Text="Location" />
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                <Entry x:Name="CoordinatesEntry"
+                       Placeholder="lat, lng, Google Maps link or Plus Code"
+                       ReturnType="Done"
+                       Completed="OnSaveClicked"
+                       TextChanged="OnLocationTextChanged" />
+                <Button x:Name="FindButton"
+                        Grid.Column="1"
+                        Text="Find"
+                        Style="{StaticResource SecondaryButton}"
+                        Clicked="OnFindClicked" />
+            </Grid>
+            <Label Text="Paste coordinates, a Google Maps share link (maps.app.goo.gl/...) or a Plus Code (e.g. 2HCV+X8 Ahmedabad), then tap Find to turn it into coordinates."
+                   FontSize="12"
+                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource NavyMuted}}" />
+
+            <ActivityIndicator x:Name="FindingIndicator" IsRunning="False" IsVisible="False" HorizontalOptions="Start" />
+            <Label x:Name="SourceLabel"
+                   FontSize="12"
+                   IsVisible="False"
+                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource NavyMuted}}" />
+
+            <!-- Free OpenStreetMap preview of where the coordinates point (no API key) -->
+            <Border x:Name="MapFrame"
+                    IsVisible="False"
+                    HeightRequest="260"
+                    StrokeShape="RoundRectangle 12"
+                    StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource NavyBorder}}">
+                <WebView x:Name="MapView" />
+            </Border>
+
+            <Label x:Name="ErrorLabel" TextColor="{StaticResource Red500}" FontSize="13" IsVisible="False" />
+
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="12" Margin="0,8,0,0">
+                <Button Text="Cancel" Style="{StaticResource SecondaryButton}" Clicked="OnCancelClicked" />
+                <Button x:Name="SaveButton" Grid.Column="1" Text="Save" Clicked="OnSaveClicked" />
+            </Grid>
+        </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

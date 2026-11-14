@@ -1,0 +1,151 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:TSHR_AutoClock"
+             xmlns:converters="clr-namespace:TSHR_AutoClock.Converters"
+             x:Class="TSHR_AutoClock.MainPage"
+             Title="AutoPunch"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="{StaticResource Navy}">
+
+    <ContentPage.Resources>
+        <converters:InvertedBoolConverter x:Key="InvertBool" />
+    </ContentPage.Resources>
+
+    <ContentPage.BindingContext>
+        <local:MainPageViewModel />
+    </ContentPage.BindingContext>
+
+    <Grid RowDefinitions="Auto,Auto,*">
+        <!-- Custom header (instead of the Shell nav bar) so the title is truly centered: the settings button overlays the right edge -->
+        <Grid Grid.Row="0" BackgroundColor="{StaticResource Navy}" HeightRequest="56">
+            <!-- MAUI labels can't take a gradient fill, so each letter is a step along the teal (#00C4C0) to purple (#8C47F5) gradient -->
+            <Label HorizontalOptions="Center"
+                   VerticalOptions="Center"
+                   FontFamily="AppFontSemibold"
+                   FontSize="22"
+                   SemanticProperties.Description="AutoPunch">
+                <Label.FormattedText>
+                    <FormattedString>
+                        <Span Text="A" TextColor="#00C4C0" />
+                        <Span Text="u" TextColor="#12B4C7" />
+                        <Span Text="t" TextColor="#23A5CD" />
+                        <Span Text="o" TextColor="#3595D4" />
+                        <Span Text="P" TextColor="#4686DB" />
+                        <Span Text="u" TextColor="#5876E1" />
+                        <Span Text="n" TextColor="#6966E8" />
+                        <Span Text="c" TextColor="#7B57EE" />
+                        <Span Text="h" TextColor="#8C47F5" />
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
+            <ImageButton Source="settings.png"
+                         Command="{Binding OpenCredentialsCommand}"
+                         HorizontalOptions="End"
+                         VerticalOptions="Center"
+                         HeightRequest="40"
+                         WidthRequest="40"
+                         Padding="6"
+                         Margin="0,0,12,0"
+                         BackgroundColor="Transparent"
+                         SemanticProperties.Description="Settings" />
+        </Grid>
+
+        <!-- Signature brand gradient accent -->
+        <Border Grid.Row="1" HeightRequest="4" StrokeThickness="0" Background="{StaticResource BrandGradient}" />
+
+        <ScrollView Grid.Row="2" BackgroundColor="{AppThemeBinding Light={StaticResource WarmWhite}, Dark={StaticResource Navy}}">
+        <VerticalStackLayout Padding="20" Spacing="18">
+
+            <Border StrokeShape="RoundRectangle 14"
+                    StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource NavyBorder}}"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource NavySurface}}">
+                <VerticalStackLayout Padding="16" Spacing="6">
+                    <Label Text="Status" FontSize="12" TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource NavyMuted}}" />
+                    <Label Text="{Binding StatusText}" FontSize="18" FontAttributes="Bold" />
+                    <Label Text="{Binding LastActionText}" FontSize="12" TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource NavyMuted}}" />
+                    <ActivityIndicator IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}" HorizontalOptions="Start" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Border StrokeShape="RoundRectangle 14"
+                    StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource NavyBorder}}"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource NavySurface}}">
+                <VerticalStackLayout Padding="16" Spacing="8">
+                    <Label Text="Preset Locations" FontSize="12" TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource NavyMuted}}" />
+                    <!-- One row per preset slot (from the view-model), so more locations need no layout change -->
+                    <VerticalStackLayout Spacing="0" BindableLayout.ItemsSource="{Binding Presets}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="local:PresetItem">
+                                <VerticalStackLayout Spacing="0">
+                                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="4" Padding="0,6">
+                                        <RadioButton GroupName="ClockLocation"
+                                                     IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                                     VerticalOptions="Center" />
+                                        <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                            <VerticalStackLayout.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding EditCommand}" />
+                                            </VerticalStackLayout.GestureRecognizers>
+                                            <Label Text="{Binding Name}" FontAttributes="Bold" />
+                                            <Label Text="{Binding CoordinatesText}"
+                                                   FontSize="12"
+                                                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource NavyMuted}}" />
+                                        </VerticalStackLayout>
+                                    </Grid>
+                                    <BoxView HeightRequest="1"
+                                             IsVisible="{Binding ShowDivider}"
+                                             Color="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource NavyBorder}}" />
+                                </VerticalStackLayout>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Both outlined by default; the next valid action (from a successful sync) gets the gradient fill -->
+            <!-- Each action has a gradient and an outlined button in the same cell, and only one is visible.
+                 Restyling one button at runtime is unreliable on Windows (trigger backgrounds don't revert,
+                 and swapped styles get stuck in the Disabled visual state). -->
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                <Button Text="Check In"
+                        IsVisible="{Binding IsCheckInSuggested}"
+                        Command="{Binding CheckInCommand}"
+                        IsEnabled="{Binding IsNotLoading}"
+                        CornerRadius="12" />
+                <Button Text="Check In"
+                        IsVisible="{Binding IsCheckInSuggested, Converter={StaticResource InvertBool}}"
+                        Style="{StaticResource SecondaryButton}"
+                        Command="{Binding CheckInCommand}"
+                        IsEnabled="{Binding IsNotLoading}"
+                        CornerRadius="12" />
+                <Button Text="Check Out"
+                        Grid.Column="1"
+                        IsVisible="{Binding IsCheckOutSuggested}"
+                        Command="{Binding CheckOutCommand}"
+                        IsEnabled="{Binding IsNotLoading}"
+                        CornerRadius="12" />
+                <Button Text="Check Out"
+                        Grid.Column="1"
+                        IsVisible="{Binding IsCheckOutSuggested, Converter={StaticResource InvertBool}}"
+                        Style="{StaticResource SecondaryButton}"
+                        Command="{Binding CheckOutCommand}"
+                        IsEnabled="{Binding IsNotLoading}"
+                        CornerRadius="12" />
+            </Grid>
+
+            <Button Text="Sync with HRMS"
+                    Style="{StaticResource SecondaryButton}"
+                    Command="{Binding SyncCommand}"
+                    IsEnabled="{Binding IsNotLoading}"
+                    CornerRadius="12" />
+
+                <Label Text="Select a location to clock with. Tap its name to edit it."
+                   FontSize="11"
+                   TextColor="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource NavyMuted}}" />
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+
+</ContentPage>

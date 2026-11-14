@@ -1,0 +1,91 @@
+## .NET MAUI / Visual Studio .gitignore
+
+# Build output
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+[Ll]og/
+[Ll]ogs/
+artifacts/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.userprefs
+*.rsuser
+launchSettings.local.json
+
+# Rider / VS Code
+.idea/
+*.sln.iml
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# NuGet
+*.nupkg
+*.snupkg
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+*.nuget.props
+*.nuget.targets
+project.lock.json
+project.fragment.lock.json
+
+# Test results / coverage
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.trx
+*.coverage
+*.coveragexml
+coverage*.json
+coverage*.xml
+
+# Android
+*.apk
+*.aab
+*.keystore
+*.jks
+Resource.designer.cs
+
+# iOS / Mac Catalyst
+*.ipa
+*.dSYM/
+*.mobileprovision
+xcuserdata/
+*.xcuserstate
+
+# Windows packaging
+*.msix
+*.msixbundle
+*.appx
+*.appxbundle
+*.appxupload
+AppPackages/
+BundleArtifacts/
+*.pfx
+
+# Secrets
+appsettings.*.local.json
+*.env
+.env
+
+# Temp / OS files
+*.tmp
+*.cache
+*.log
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+	<!-- No backup: SecureStorage (credentials, session) can't be decrypted on a restored device, and it keeps the session out of backups -->
+	<application android:allowBackup="false" android:icon="@mipmap/appicon" android:roundIcon="@mipmap/appicon_round" android:supportsRtl="true"></application>
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+	<uses-permission android:name="android.permission.INTERNET" />
+	<!-- Results of shortcut/Routine clock actions (Android 13+ asks the user) -->
+	<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+</manifest>
